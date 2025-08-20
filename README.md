@@ -1,135 +1,62 @@
-# Turborepo starter
+## Heartbeat- Uptime Monitoring System (TypeScript Backend)
 
-This Turborepo starter is maintained by the Turborepo core team.
+A scalable uptime monitoring system built with TypeScript. It continuously monitors websites, detects downtime, and notifies users via email/phone when their services go offline.
 
-## Using this example
+### ⚙️ Features
 
-Run the following command:
+🛰 **Website Monitoring** – Track uptime of multiple websites in real time.
 
-```sh
-npx create-turbo@latest
-```
+📡 **Polling System** – Efficiently pulls websites from the database at scheduled intervals.
 
-## What's inside?
+🧵 **Worker Queue Architecture** – Scales horizontally with multiple workers handling checks.
 
-This Turborepo includes the following packages/apps:
+🚨 **Failure Detection & Retry** – Retries failed checks and requeues tasks for reliability.
 
-### Apps and Packages
+📬 **Notification System** – Notifies users via email or call when their site is down.
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+⚡ **Built with TypeScript** – Strongly typed, modern, and developer-friendly.
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
-### Utilities
+### Database design
 
-This Turborepo has some additional tools already setup for you:
+![Database Diagram](./architecture/database_design.png)
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+### 🏗️ Architecture Overview
 
-### Build
+![Architecture Diagram](./architecture/architecture.png)
 
-To build all apps and packages, run the following command:
+The system follows a poller + queue + worker pattern for scalability and fault tolerance:
 
-```
-cd my-turborepo
+1. Poller Service
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+    - Periodically pulls the list of websites to monitor from the database.
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+    - Pushes monitoring tasks into the Monitoring Queue.
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+2. Monitoring Queue & Workers
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+    - Workers consume tasks from the queue.
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+    - Each worker performs an uptime check by sending an HTTP request to the website.
 
-### Develop
+    - If successful → mark website as up.
 
-To develop all apps and packages, run the following command:
+    - If failed → acknowledge failure and push the website into the Retry Queue.
 
-```
-cd my-turborepo
+3. Retry Queue
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+    - Handles failed monitoring tasks.
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+    - If the website still fails after retries, it is marked as down.
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+    - Website details are pushed to the Notification Queue.
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+4. Notification Queue & Workers
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+    - Dedicated workers pull tasks from the notification queue.
 
-### Remote Caching
+    - Notifies users via email/SMS/call (configurable).
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+    - Ensures users are alerted immediately when downtime occurs.
+  
+## Happy Coding 👨‍💻
