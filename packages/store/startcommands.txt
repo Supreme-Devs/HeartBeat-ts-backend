@@ -7,3 +7,4 @@ then try the command again
 
 then do : 
 bunx prisma migrate dev
+bunx prisma generate
