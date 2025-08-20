@@ -1,0 +1,9 @@
+docker run -p 5432:5432 -e POSTGRES_PASSWORD=postgres  postgres  
+
+if its an issue the docker ps 
+and docker kill the container id
+
+then try the command again
+
+then do : 
+bunx prisma migrate dev
