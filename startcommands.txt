@@ -8,3 +8,10 @@ then try the command again
 then do : 
 bunx prisma migrate dev
 bunx prisma generate
+
+
+
+for running the tests : 
+
+Turn on the server 
+then go to the tests folder and run bun tests
