@@ -5,13 +5,29 @@ and docker kill the container id
 
 then try the command again
 
-then do : 
-bunx prisma migrate dev
-bunx prisma generate
 
 
 
-for running the tests : 
+// For starting the postgres server in docker from scratch with two seperate databases
+step 1  : Make sure the postgres is running in the background
+step 2 : docker run -p 5432:5432 -e POSTGRES_PASSWORD=postgres  postgres 
+step 3 : docker exec -it <container_id> psql -U postgres -c "CREATE DATABASE ts_app;"
+step 4 : change the link in .env to this DATABASE_URL=postgres://postgres:postgres@localhost:5432/ts_app 
+step 5 : bunx prisma init
+step 6 : bunx  prisma migrate dev
+step 7 : bunx prisma generate
+
+
+
+// for confirming go inside the container and run the command
+step 1 : docker exec -it <container_id> sh
+step 2 : psql -U postgres
+step 3 : listing the databases \l
+step 4 : for connecting to the db /c <db_name >
+step 5 : for viewing all the tables \dt
+
+
+//for running the tests : 
 
 Turn on the server 
 then go to the tests folder and run bun tests

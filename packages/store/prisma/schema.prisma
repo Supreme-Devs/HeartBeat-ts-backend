@@ -14,12 +14,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model website {
+model User {
+  id       String    @id @default(uuid())
+  username String    @unique
+  password String
+  websites Website[]
+}
+
+model Website {
   id      String        @id @default(uuid())
   url     String
   timeAdd DateTime
   // not using time series db right now
   ticks   WebsiteTick[]
+  userId  String
+  user    User          @relation(fields: [userId], references: [id])
 }
 
 model Region {
@@ -33,9 +42,10 @@ model WebsiteTick {
   response_time_ms Int
   status           websiteStatus
   region           Region        @relation(fields: [regionId], references: [id])
-  website          website       @relation(fields: [websiteId], references: [id])
+  website          Website       @relation(fields: [websiteId], references: [id])
   regionId         String
   websiteId        String
+  createdAt        DateTime      @default(now())
 }
 
 enum websiteStatus {

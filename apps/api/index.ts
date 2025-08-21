@@ -16,6 +16,11 @@ app.post("/website", async (req, res) => {
     data: {
       url: req.body.url,
       timeAdd: new Date(),
+      user: {
+        connect: {
+          id: req.body.userId,
+        },
+      },
       // not using time series db right now
     },
   });
