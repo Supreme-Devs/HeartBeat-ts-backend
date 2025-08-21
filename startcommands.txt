@@ -31,3 +31,8 @@ step 5 : for viewing all the tables \dt
 
 Turn on the server 
 then go to the tests folder and run bun tests
+
+
+// Steps after automation
+step 1 : bash setup/init.sh
+step 2 : bash setup/list_table.sh

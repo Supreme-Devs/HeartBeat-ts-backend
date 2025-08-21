@@ -17,10 +17,11 @@ else
 fi
 
 echo "📦 Ensuring databases exist..."
-docker exec -it $CONTAINER_NAME psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'ts_app';" | grep -q 1 || \
-  docker exec -it $CONTAINER_NAME psql -U postgres -c "CREATE DATABASE ts_app;"
+docker exec $CONTAINER_NAME psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'ts_app';" | grep -q 1 || \
+  docker exec $CONTAINER_NAME psql -U postgres -c "CREATE DATABASE ts_app;"
 
-docker exec -it $CONTAINER_NAME psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'rust_app';" | grep -q 1 || \
-  docker exec -it $CONTAINER_NAME psql -U postgres -c "CREATE DATABASE rust_app;"
+docker exec $CONTAINER_NAME psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'rust_app';" | grep -q 1 || \
+  docker exec $CONTAINER_NAME psql -U postgres -c "CREATE DATABASE rust_app;"
 
 echo "✅ Databases ready: ts_app, rust_app"
+
